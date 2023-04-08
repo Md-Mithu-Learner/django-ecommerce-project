@@ -1,14 +1,20 @@
-
-
 from pathlib import Path
-from .local_settings import SECRET_KEY, DEBUG
+
+import environ
+import os
+env = environ.Env(
+    DEBUG=(bool, False)
+)
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
+MEDIA_DIR = os.path.join(BASE_DIR, 'media')
 
-
-SECRET_KEY = SECRET_KEY
-
-DEBUG = DEBUG
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+DEBUG = env('DEBUG')
+SECRET_KEY = env('SECRET_KEY')
 
 ALLOWED_HOSTS = []
 
@@ -22,8 +28,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # LOCAL APPS
+    'App_Login.apps.AppLoginConfig',
+    'App_Shop.apps.AppShopConfig',
+    'App_Order.apps.AppOrderConfig',
+    'App_Payment.apps.AppPaymentConfig',
+    # 3rd party app
+    'rest_framework',
+    'crispy_forms',
 ]
 
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+AUTH_USER_MODEL = 'App_Login.User'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -39,7 +55,7 @@ ROOT_URLCONF = 'conf.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATES_DIR,],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -90,7 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Dhaka'
 
 USE_I18N = True
 
@@ -101,6 +117,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [STATIC_DIR,]
+# media files
+MEDIA_ROOT = MEDIA_DIR
+MEDIA_URL = 'media/'
+LOGIN_URL = '/account/login/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
